@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 export default function App() {
   return (
@@ -12,12 +12,9 @@ export default function App() {
 function Counter() {
   const[step, setStep] = useState(1);
   const[count, setCount] = useState(0);
-  const[date, setDate] = useState(new Date());
-  const[dateString, setDateString] = useState(`Today is ${date.toString().split(" ").slice(0,4).join(" ")}`);
 
-  useEffect(() => {
-    handleDateString();
-  }, [date]);
+  const date = new Date();
+  date.setDate(date.getDate() + count);
 
 
   // ============= Step Handlers ============= //
@@ -32,41 +29,15 @@ function Counter() {
 
   // ============= Count Handlers ============= //
   function handleCountUp() {
-    setCount((current) => current + step);
-    handleDate();
-    
+    setCount((current) => current + step);    
   }
 
   function handleCountDown() {
     setCount((current) => current - step);
-    handleDate();
   }
 
-
-  // ============= Date handlers ============= //
-  function handleDate() {
-    const now = new Date();
-    setDate(new Date(new Date(now).setDate(now.getDate() + count)));
-  }
-
-
-  // ============= Date String handler ============= //
-  function handleDateString() {
-    console.log("date " + date.setHours(0, 0, 0, 0).toString());
-    console.log("today " + new Date().setHours(0,0,0,0).toString());
-
-    // Comparo ambas fechas llevando la hora a 0 en ambas
-    if (date.setHours(0, 0, 0, 0) === new Date().setHours(0,0,0,0)) {
-      setDateString(`Today is ${date.toString().split(" ").slice(0,4).join(" ")}`);
-    }
-    else if (date.setHours(0, 0, 0, 0) > new Date().setHours(0,0,0,0)) {
-      setDateString(`${count} days from today is ${date.toString().split(" ").slice(0,4).join(" ")}`);
-    }
-    else {
-      setDateString(`${count.toString().split("").slice(1).join("")} days ago was ${date.toString().split(" ").slice(0,4).join(" ")}`);
-    }
-  }
-
+  
+  // ============== JSX ================ //
   return <div className="counter">
     <div className="step">
       <button className="btn" onClick={handleStepDown}>-</button>
@@ -81,10 +52,11 @@ function Counter() {
     </div>
 
     <h3 className="dateString">
-      {dateString}
-    </h3>
-    <h3 className="dateString">
-      {date.toString()}
+      <span>{count === 0 ? "Today is " 
+            : count > 0 ? `${count} days from today is `
+            : `${Math.abs(count)} days ago was `}
+      </span>
+      <span>{date.toDateString()}</span>
     </h3>
   </div>
 }
